@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+
+  <input id="minAge" placeholder="min age" type="number" />
+  <input id="maxAge" placeholder="max age" type="number" />
+  <button id="filter">Filter</button>
+  <button id="reset">Reset</button>
+  <br>
+  <button id="addUser">Add User</button>
+  <input id="name" placeholder="name" type="text" />
+  <input id="age" placeholder="age" type="number" />
+  <br>
+  <button id="remove-all">Remove All</button>
+
+  <div>
+    <ul id="users-list"></ul>
+  </div>
+
+
+  <script>
+
+    function renderUsers(users) {
+      $('#users-list').empty();
+      users.forEach((user, index) => {
+        const info = $('<span></span>').text('name: ' + user.name + ', age: ' + user.age);
+        const removeBtn = $('<button></button>').text('X');
+        const listItem = $('<li></li>');
+        removeBtn.click(() => removeUser(index));
+
+        listItem.append(info)
+        listItem.append(removeBtn)
+
+        $('#users-list').append(listItem);
+      });
+    }
+
+    function getUsers(minAge, maxAge) {
+      $.get(`/users?minAge=${minAge}&maxAge=${maxAge}`, renderUsers);
+    }
+
+    function removeUser(index) {
+      $.post('/remove', {index}, renderUsers)
+    }
+
+    $(document).ready(() => {
+      getUsers();
+
+      $('#filter').click(() => {
+
+        const minAge = $('#minAge').val()
+        const maxAge = $('#maxAge').val()
+        getUsers(minAge, maxAge);
+      });
+
+      $('#reset').click(() => {
+        $('#minAge, #maxAge').val(null);
+        getUsers()
+      })
+
+      $('#remove-all').click(() => {
+        removeUser()
+      })
+
+      $('#addUser').click(() => {
+        $.post('/users', {
+          name: $('#name').val() || 'unknown', 
+          age: +$('#age').val() || 0,
+        }, renderUsers)
+      })
+    })
+
+  </script>
+</body>
+</html>

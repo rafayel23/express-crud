@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const assetsPath = path.join(__dirname, '../assets');
 const app = express();
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -49,6 +50,6 @@ app.post('/remove', (req, res) => {
   res.send(users);
 })
 
-app.listen(3000, () => {
-  console.log('Running server on localhost:3000');
+app.listen(port, () => {
+  console.log('Running server on ' + port);
 })

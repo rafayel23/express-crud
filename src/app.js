@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const assetsPath = path.join(__dirname, '../assets');
+const dbPath = path.join(__dirname, './users.json');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -12,11 +13,11 @@ app.use(bodyParser.json());
 app.use(express.static(assetsPath));
 
 function getUsers() {
-  return JSON.parse(fs.readFileSync('./users.json').toString());
+  return JSON.parse(fs.readFileSync(dbPath).toString());
 }
 
 function setUsers(users) {
-  fs.writeFileSync('./users.json', JSON.stringify(users, null, 2));
+  fs.writeFileSync(dbPath, JSON.stringify(users, null, 2));
 }
 
 app.get('/users', (req, res) => {
